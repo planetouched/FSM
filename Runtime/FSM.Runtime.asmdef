@@ -1,0 +1,16 @@
+{
+    "name": "FSM.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "JsonRawNode"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
