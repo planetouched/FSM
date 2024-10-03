@@ -258,20 +258,26 @@ namespace FSM.Editor.Nodes
                     action.PendingDestroy = false;
                 }
 
+                EditorGUILayout.Separator();
+
                 if (i < _actions.Count - 1)
                 {
                     if (_parallel || action.Linked && _actions[i + 1].Linked)
                     {
-                        NodeLibUtil.DrawWithColor(new Color(0f, 1f, 0f), () => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider));
-                        NodeLibUtil.DrawWithColor(new Color(0f, 1f, 0f), () => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider));
-                    }
-                    else
-                    {
-                        //NodeLibUtil.DrawWithColor(new Color(0.3f, 0.3f, 0.3f), () => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider));
+                        var parallelStyle = new GUIStyle();
+                        parallelStyle.normal.background = Texture2D.whiteTexture;
+                        var parallelColor = new Color(0, 0.8f, 0);
+                        bc = GUI.backgroundColor;
+                        GUI.backgroundColor = parallelColor;
+
+                        EditorGUILayout.BeginVertical(actionStyle);
+                        EditorGUILayout.Separator();
+                        EditorGUILayout.EndVertical();
+
+                        GUI.backgroundColor = bc;
                     }
                 }
-
-                EditorGUILayout.Separator();
+                
                 EditorGUILayout.EndVertical();
             }
             
