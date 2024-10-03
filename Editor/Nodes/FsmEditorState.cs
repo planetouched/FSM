@@ -218,8 +218,20 @@ namespace FSM.Editor.Nodes
             EditorGUILayout.BeginVertical();
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos, GUILayout.Width(iRect.width + 20), GUILayout.Height(iRect.height - 150));
 
+            var counter = 0;
+            var actionStyle = new GUIStyle();
+            actionStyle.normal.background = Texture2D.whiteTexture;
+            var oddColor = new Color32(60, 60, 60, 255);
+            var evenColor = new Color32(120, 120, 120, 255);
+
             for (var i = 0; i < _actions.Count; i++)
             {
+                var bc = GUI.backgroundColor;
+                GUI.backgroundColor = counter++ % 2 == 0 ? oddColor : evenColor;
+                EditorGUILayout.BeginVertical(actionStyle);
+                EditorGUILayout.Separator();
+                GUI.backgroundColor = bc;
+
                 var action = _actions[i];
                 action.Draw(iRect);
 
@@ -255,9 +267,12 @@ namespace FSM.Editor.Nodes
                     }
                     else
                     {
-                        NodeLibUtil.DrawWithColor(new Color(0.3f, 0.3f, 0.3f), () => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider));
+                        //NodeLibUtil.DrawWithColor(new Color(0.3f, 0.3f, 0.3f), () => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider));
                     }
                 }
+
+                EditorGUILayout.Separator();
+                EditorGUILayout.EndVertical();
             }
             
             NodeLibUtil.DrawWithColor(new Color(0.3f, 0.3f, 0.3f), () => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider));
