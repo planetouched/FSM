@@ -28,8 +28,9 @@ namespace FSM.Editor
 
         private static FsmEditor _editor;
         private Vector2 _lastMenuPosition;
-        private FsmEditorState _cloneNode;
-
+        
+        private static FsmEditorState _cloneNode;
+        
         [MenuItem("Assets/Fsm/Open Fsm")]
         public static void QuestSchemeLoad()
         {
@@ -136,16 +137,40 @@ namespace FSM.Editor
             }
 
             var e = Event.current;
-            
-            if (e.type == EventType.KeyDown && e.control && e.keyCode == KeyCode.D)
+
+            if (e.type == EventType.KeyDown)
             {
-                var focused = FindFocusedNode();
-                if (focused != null)
+                if (e.control && e.keyCode == KeyCode.D)
                 {
-                    DoCommand(new CloneNodeCommand((FsmEditorState)focused, this));
+                    var focused = FindFocusedNode();
+                    if (focused != null)
+                    {
+                        var from = (FsmEditorState)focused;
+                        var cmd = new CloneNodeCommand(from, this);
+                        cmd.Position = from.Position + Vector2.one * 100;
+                        DoCommand(cmd);
+                    }
+                
+                    e.Use();
+                }
+
+                if (e.control && e.keyCode == KeyCode.C)
+                {
+                    _cloneNode = (FsmEditorState)FindFocusedNode();
+                    e.Use();
                 }
                 
-                e.Use();
+                if (e.control && e.keyCode == KeyCode.V)
+                {
+                    if (_cloneNode != null)
+                    {
+                        var cmd = new CloneNodeCommand(_cloneNode, this);
+                        cmd.Position = -_editor.ContentOffset + Vector2.one * 200;
+                        DoCommand(cmd);
+                    }
+                
+                    e.Use();
+                }
             }
             
             base.Draw();

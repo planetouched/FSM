@@ -13,7 +13,9 @@ namespace FSM.Editor.Commands
     {
         public const string ConstType = "CloneNodeCommand";
 
-        private FsmEditorState _state;
+        private readonly FsmEditorState _state;
+        
+        public Vector2 Position { get; set; }
         
         public CloneNodeCommand(FsmEditorState state, NodeLibEditor editor) : base(editor)
         {
@@ -26,7 +28,7 @@ namespace FSM.Editor.Commands
 
         public override void Do()
         {
-            var newState = new FsmEditorState(_state.Title, _state.Position + Vector2.one * 100)
+            var newState = new FsmEditorState(_state.Title, Position)
             {
                 Parallel = _state.Parallel,
                 Editor = editor
