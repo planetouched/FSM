@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using FSM.Editor.Commands;
 using FSM.Editor.Nodes;
 using FSM.Editor.Ports;
 using FSM.Runtime.Debugging;
@@ -11,6 +12,7 @@ using Jsonite;
 using JsonRawNode;
 using NodeLib.Editor;
 using NodeLib.Editor.Nodes;
+using NodeLib.Editor.Undo._Base;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,6 +28,7 @@ namespace FSM.Editor
 
         private static FsmEditor _editor;
         private Vector2 _lastMenuPosition;
+        private FsmEditorState _cloneNode;
 
         [MenuItem("Assets/Fsm/Open Fsm")]
         public static void QuestSchemeLoad()
@@ -48,6 +51,22 @@ namespace FSM.Editor
             EditorPrefs.DeleteKey(FsmEditorTempFileName);
             CreateWindow<FsmEditor>("FSM");
         }
+
+        protected override ICommand CommandFactory(RawNode commData)
+        {
+            var cmd =  base.CommandFactory(commData);
+            if (cmd != null) return cmd;
+            
+            var type = commData.GetString("type");
+            switch (type)
+            {
+                case CloneNodeCommand.ConstType:
+                    return new CloneNodeCommand(this, commData);
+            }
+
+            return null;
+        }
+
 
         private void OnExitAction(object obj)
         {
@@ -116,6 +135,19 @@ namespace FSM.Editor
                 ContentOffset = Vector2.zero;
             }
 
+            var e = Event.current;
+            
+            if (e.type == EventType.KeyDown && e.control && e.keyCode == KeyCode.D)
+            {
+                var focused = FindFocusedNode();
+                if (focused != null)
+                {
+                    DoCommand(new CloneNodeCommand((FsmEditorState)focused, this));
+                }
+                
+                e.Use();
+            }
+            
             base.Draw();
         }
 

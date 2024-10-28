@@ -20,8 +20,10 @@ namespace FSM.Editor.Nodes
 
         public override Vector2 MinSize => new(120, 64);
 
-        private bool _parallel;
+        public bool Parallel { get; set; }
+        
         private readonly List<FsmEditorActionBase> _actions = new();
+        public List<FsmEditorActionBase> Actions => _actions;
 
         private int _selectedIdx;
         private string _filter = String.Empty;
@@ -126,7 +128,7 @@ namespace FSM.Editor.Nodes
                 }
             }
 
-            _parallel = rawData.GetBool("parallel");
+            Parallel = rawData.GetBool("parallel");
         }
 
         private string[] Filtered()
@@ -165,11 +167,11 @@ namespace FSM.Editor.Nodes
         {
             base.DrawInspector(iRect);
 
-            var parallel = EditorGUILayout.Toggle("Parallel", _parallel, GUILayout.Width(iRect.width));
+            var parallel = EditorGUILayout.Toggle("Parallel", Parallel, GUILayout.Width(iRect.width));
 
-            if (SerializeContentIfChanged(parallel, _parallel))
+            if (SerializeContentIfChanged(parallel, Parallel))
             {
-                _parallel = parallel;
+                Parallel = parallel;
             }
 
             EditorGUILayout.Separator();
@@ -262,7 +264,7 @@ namespace FSM.Editor.Nodes
 
                 if (i < _actions.Count - 1)
                 {
-                    if (_parallel || action.Linked && _actions[i + 1].Linked)
+                    if (Parallel || action.Linked && _actions[i + 1].Linked)
                     {
                         var parallelStyle = new GUIStyle();
                         parallelStyle.normal.background = Texture2D.whiteTexture;
@@ -379,7 +381,7 @@ namespace FSM.Editor.Nodes
 
         public override object Serialize()
         {
-            return SerializeUtil.Dict(base.Serialize()).SetArgs("parallel", _parallel, "actions", SerializeUtil.SerializeArray(_actions));
+            return SerializeUtil.Dict(base.Serialize()).SetArgs("parallel", Parallel, "actions", SerializeUtil.SerializeArray(_actions));
         }
 
         public virtual object SerializeRuntime()
@@ -391,7 +393,7 @@ namespace FSM.Editor.Nodes
                 actions.Add(action.SerializeRuntime());
             }
 
-            var dict = SerializeUtil.Dict().SetArgs("parallel", _parallel, "actions", actions);
+            var dict = SerializeUtil.Dict().SetArgs("parallel", Parallel, "actions", actions);
             
             
             var port = FindPortByName("Finish");
