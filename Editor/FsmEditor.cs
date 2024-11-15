@@ -140,7 +140,7 @@ namespace FSM.Editor
 
             if (e.type == EventType.KeyDown)
             {
-                if (e.control && e.keyCode == KeyCode.D)
+                if (e.control && e.shift && e.keyCode == KeyCode.D)
                 {
                     var focused = FindFocusedNode();
                     if (focused != null)
@@ -154,13 +154,13 @@ namespace FSM.Editor
                     e.Use();
                 }
 
-                if (e.control && e.keyCode == KeyCode.C)
+                if (e.control && e.shift && e.keyCode == KeyCode.C)
                 {
                     _cloneNode = (FsmEditorState)FindFocusedNode();
                     e.Use();
                 }
                 
-                if (e.control && e.keyCode == KeyCode.V)
+                if (e.control && e.shift && e.keyCode == KeyCode.V)
                 {
                     if (_cloneNode != null)
                     {
