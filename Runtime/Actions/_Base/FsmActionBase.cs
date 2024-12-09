@@ -108,6 +108,7 @@ namespace FSM.Runtime.Actions._Base
             }
 
             OnFinish();
+            CancelTimers();
             Finished?.Invoke(this);
         }
     }

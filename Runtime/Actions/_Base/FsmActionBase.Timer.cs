@@ -44,7 +44,15 @@ namespace FSM.Runtime.Actions._Base
                 _removeTimers.Clear();
             }
         }
-        
+
+        private void CancelTimers()
+        {
+            foreach (var timer in _timers)
+            {
+                timer.Cancel();
+            }
+        }
+
         protected class Timer
         {
             private readonly float _duration;
@@ -62,6 +70,11 @@ namespace FSM.Runtime.Actions._Base
                 _call = call;
                 _duration = duration;
                 _once = once;
+            }
+
+            public void Cancel()
+            {
+                IsFinished = true;
             }
 
             public void Tick(float dt)
