@@ -105,6 +105,13 @@ namespace FSM.Editor.Nodes
 
         public FsmEditorState(RawNode data) : base(data)
         {
+            foreach (var port in Ports)
+            {
+                if (port.PortDirection == PortDirection.Out)
+                {
+                    port.MultipleConnections = false;
+                }
+            }
         }
 
         protected override void OnInitialize(RawNode rawData)
