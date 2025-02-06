@@ -19,6 +19,7 @@ namespace FSM.Editor.Commands
         
         public CloneNodeCommand(FsmEditorState state, NodeLibEditor editor) : base(editor)
         {
+            Type = ConstType;
             _state = state;
         }
 
