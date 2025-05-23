@@ -4,7 +4,7 @@ using FSM.Editor.Actions;
 using FSM.Editor.Nodes;
 using JsonRawNode;
 using NodeLib.Editor;
-using NodeLib.Editor.Undo._Base;
+using NodeLib.Editor.Commands._Base;
 using UnityEngine;
 
 namespace FSM.Editor.Commands
