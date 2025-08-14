@@ -12,6 +12,8 @@ namespace FSM.Runtime.Nodes
 
         public int UniqueId { get; private set; }
         private readonly bool _parallel;
+        public List<FsmActionBase> Actions => _actions;
+        
         private readonly List<FsmActionBase> _actions = new();
         private readonly string _finish;
         private readonly Fsm _fsm;

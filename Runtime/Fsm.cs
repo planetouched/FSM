@@ -12,6 +12,8 @@ namespace FSM.Runtime
         public event Action<string, bool, Fsm> ExternalEventCalled;
         
         public FsmState Current { get; private set; }
+
+        public Dictionary<string, FsmState> States => _states;
         
         private readonly Dictionary<string, FsmInputEvent> _inputs = new();
         private readonly Dictionary<string, FsmState> _states = new();
