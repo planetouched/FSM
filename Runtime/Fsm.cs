@@ -71,7 +71,7 @@ namespace FSM.Runtime
             ExternalEventCalled?.Invoke(inputEventName, copyFsmValues, this);
         }
         
-        public void StartWithEvent(string inputEventName, Fsm copyValuesFrom = null)
+        public bool StartWithEvent(string inputEventName, Fsm copyValuesFrom = null)
         {
             foreach (var pair in _inputs)
             {
@@ -90,10 +90,14 @@ namespace FSM.Runtime
                     if (!string.IsNullOrEmpty(pair.Value.To))
                     {
                         ToState(pair.Value.To);
+                        return true;
                     }
+                    
                     break;
                 }
             }
+
+            return false;
         }
 
         public void Drop()
