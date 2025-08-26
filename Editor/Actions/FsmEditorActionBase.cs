@@ -29,8 +29,9 @@ namespace FSM.Editor.Actions
         protected RawNode node;
 
         public bool PendingUpdatingPorts { get; set; }
-        public bool PendingUp { get; set; }
-        public bool PendingDown { get; set; }
+        public bool PendingMoving { get; set; }
+        // public bool PendingUp { get; set; }
+        // public bool PendingDown { get; set; }
         public bool PendingDestroy { get; set; }
 
         protected bool hideCyclicalField;
@@ -83,16 +84,13 @@ namespace FSM.Editor.Actions
         {
             EditorGUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("↑", GUILayout.Width(20)))
+            if (GUILayout.Button("M", GUILayout.Width(20)))
             {
-                PendingUp = true;
+                PendingMoving = true;
             }
 
-            if (GUILayout.Button("↓", GUILayout.Width(20)))
-            {
-                PendingDown = true;
-            }
-
+            GUILayout.Space(iRect.width - 50);
+            
             if (GUILayout.Button("X", GUILayout.Width(20)))
             {
                 PendingDestroy = true;

@@ -39,6 +39,8 @@ namespace FSM.Editor.Nodes
 
         private GUIStyle _separatorStyle;
         private Vector2 _scrollPos;
+        
+        private FsmEditorActionBase _pendingMoving;
 
         static FsmEditorState()
         {
@@ -170,6 +172,33 @@ namespace FSM.Editor.Nodes
             return _filteredItems;
         }
 
+        private void DrawMovingButton(Rect iRect, int currentPos, ref bool updatePorts)
+        {
+            var tmp = GUI.backgroundColor;
+            GUI.backgroundColor = Color.green;
+            
+            if (GUILayout.Button("Insert here", GUILayout.Width(iRect.width)))
+            {
+                int idx = _actions.IndexOf(_pendingMoving);
+                if (idx >= 0)
+                {
+                    SerializeContent();
+                    _actions.RemoveAt(idx);
+                    _actions.Insert(currentPos, _pendingMoving);
+                    updatePorts = true;
+                }
+
+                _pendingMoving = null;
+            }
+            
+            GUI.backgroundColor = tmp;
+        }
+
+        protected override void OnFocused()
+        {
+            _pendingMoving = null;
+        }
+
         public override void DrawInspector(Rect iRect)
         {
             base.DrawInspector(iRect);
@@ -220,8 +249,6 @@ namespace FSM.Editor.Nodes
             }
 
             bool updatePorts = false;
-            FsmEditorActionBase up = null;
-            FsmEditorActionBase down = null;
             FsmEditorActionBase destroy = null;
             
             EditorGUILayout.BeginVertical();
@@ -233,32 +260,59 @@ namespace FSM.Editor.Nodes
             var oddColor = new Color32(60, 60, 60, 255);
             var evenColor = new Color32(120, 120, 120, 255);
 
+            bool skipNext = false;
             for (var i = 0; i < _actions.Count; i++)
             {
+                var action = _actions[i];
+                
+                if (_pendingMoving != null && _pendingMoving != action)
+                {
+                    if (!skipNext)
+                    {
+                        DrawMovingButton(iRect, i, ref updatePorts);
+                    }
+
+                    skipNext = false;
+                }
+                else
+                {
+                    skipNext = true;
+                }
+                
                 var bc = GUI.backgroundColor;
                 GUI.backgroundColor = counter++ % 2 == 0 ? oddColor : evenColor;
+
+                if (_pendingMoving == action)
+                {
+                    GUI.backgroundColor = new Color(0.3f, 0.6f, 0.3f);
+                }
+                
                 EditorGUILayout.BeginVertical(actionStyle);
                 EditorGUILayout.Separator();
                 GUI.backgroundColor = bc;
-
-                var action = _actions[i];
+                
+                foreach (var act in _actions)
+                {
+                    act.PendingMoving = false;
+                }
+                
                 action.Draw(iRect);
+                
+                if (action.PendingMoving)
+                {
+                    if (_pendingMoving != action)
+                    {
+                        _pendingMoving = action;
+                    }
+                    else
+                    {
+                        _pendingMoving = null;
+                    }
+                }
 
                 if (action.PendingUpdatingPorts)
                 {
                     updatePorts = true;
-                }
-
-                if (action.PendingUp)
-                {
-                    up = action;
-                    action.PendingUp = false;
-                }
-
-                if (action.PendingDown)
-                {
-                    down = action;
-                    action.PendingDown = false;
                 }
 
                 if (action.PendingDestroy)
@@ -290,6 +344,14 @@ namespace FSM.Editor.Nodes
                 EditorGUILayout.EndVertical();
             }
             
+            if (_pendingMoving != null)
+            {
+                if (!skipNext)
+                {
+                    DrawMovingButton(iRect, _actions.Count - 1, ref updatePorts);
+                }
+            }
+            
             NodeLibUtil.DrawWithColor(new Color(0.3f, 0.3f, 0.3f), () => EditorGUILayout.LabelField("", GUI.skin.horizontalSlider));
 
             EditorGUILayout.EndScrollView();
@@ -308,29 +370,29 @@ namespace FSM.Editor.Nodes
                 updatePorts = true;
             }
             
-            if (up != null)
-            {
-                int idx = _actions.IndexOf(up);
-                if (idx > 0)
-                {
-                    SerializeContent();
-                    _actions.RemoveAt(idx);
-                    _actions.Insert(idx - 1, up);
-                    updatePorts = true;
-                }
-            }
-            
-            if (down != null)
-            {
-                int idx = _actions.IndexOf(down);
-                if (idx < _actions.Count - 1)
-                {
-                    SerializeContent();
-                    _actions.RemoveAt(idx);
-                    _actions.Insert(idx + 1, down);
-                    updatePorts = true;
-                }
-            }
+            // if (up != null)
+            // {
+            //     int idx = _actions.IndexOf(up);
+            //     if (idx > 0)
+            //     {
+            //         SerializeContent();
+            //         _actions.RemoveAt(idx);
+            //         _actions.Insert(idx - 1, up);
+            //         updatePorts = true;
+            //     }
+            // }
+            //
+            // if (down != null)
+            // {
+            //     int idx = _actions.IndexOf(down);
+            //     if (idx < _actions.Count - 1)
+            //     {
+            //         SerializeContent();
+            //         _actions.RemoveAt(idx);
+            //         _actions.Insert(idx + 1, down);
+            //         updatePorts = true;
+            //     }
+            // }
             
             if (updatePorts)
             {
