@@ -137,6 +137,11 @@ namespace FSM.Runtime
         {
             return _objects.ContainsKey(key);
         }
+
+        public Dictionary<string, object> GetAllObjects()
+        {
+            return _objects;
+        }
         
         public T GetObject<T>(string key)
         {
